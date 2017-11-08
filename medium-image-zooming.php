@@ -31,35 +31,36 @@ function medium_image_zooming_scripts() {
         var customZooming = new Zooming({
             defaultZoomable: ".zoom-img",
             preloadImage: false,
-            scaleBase: 0.5,
-        })
+            scaleBase: 0.8,
+        });
+
+        var customZooming = new Zooming({
+            defaultZoomable: "figure img",
+            preloadImage: false,
+            scaleBase: 0.8,
+        });
     ' );
 }
 
 add_filter( 'the_content', 'medium_image_zooming_add_class', PHP_INT_MAX );
 function medium_image_zooming_add_class( $content ){
-
-    $medium_content = mb_convert_encoding($content, 'HTML-ENTITIES', "UTF-8");
-    $medium_document = new DOMDocument();
-
-    libxml_use_internal_errors(true);
-    if( !empty($medium_content) ){
-        $medium_document->loadHTML(utf8_decode($medium_content));
+    if( is_main_query() ){
+        $pattern ="/<img(.*?)class=\"(.*?)\"(.*?)>/i";
+        $replacement = '<img$1class="$2 zoom-img"$3>';
+        $content = preg_replace($pattern, $replacement, $content);
+        return $content;
     }else{
-        return;
+        return $content;
     }
-
-
-    $imgs = $medium_document->getElementsByTagName('img');
-    foreach ($imgs as $img) {
-
-        // Add Class
-        $existing_class = $img->getAttribute('class');
-        $img->setAttribute('class', "zoom-img $existing_class");
-
-    }
-
-    $html_fragment = preg_replace('/^<!DOCTYPE.+?>/', '', str_replace( array('<html>', '</html>', '<body>', '</body>'), array('', '', '', ''), $medium_document->saveHTML()));
-    return $html_fragment;
     
 }
+
+add_filter('the_content', 'add_image_responsive_class');
+function add_image_responsive_class($content) {
+    global $post;
+    $pattern ="/<img(.*?)class=\"(.*?)\"(.*?)>/i";
+    $replacement = '<img$1class="$2 zoom-img"$3>';
+    $content = preg_replace($pattern, $replacement, $content);
+    return $content;
+ }
+ 
