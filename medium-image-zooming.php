@@ -42,7 +42,7 @@ function medium_image_zooming_scripts() {
     ' );
 }
 
-add_filter( 'the_content', 'medium_image_zooming_add_class', PHP_INT_MAX );
+add_filter( 'the_content', 'medium_image_zooming_add_class', 10 );
 function medium_image_zooming_add_class( $content ){
     if( is_main_query() ){
         $pattern ="/<img(.*?)class=\"(.*?)\"(.*?)>/i";
@@ -54,13 +54,3 @@ function medium_image_zooming_add_class( $content ){
     }
     
 }
-
-add_filter('the_content', 'add_image_responsive_class');
-function add_image_responsive_class($content) {
-    global $post;
-    $pattern ="/<img(.*?)class=\"(.*?)\"(.*?)>/i";
-    $replacement = '<img$1class="$2 zoom-img"$3>';
-    $content = preg_replace($pattern, $replacement, $content);
-    return $content;
- }
- 
